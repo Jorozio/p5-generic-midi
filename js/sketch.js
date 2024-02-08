@@ -1,20 +1,25 @@
 //////////////////////////
 /* EDIT VALUES BELOW TO MATCH DEVICE SLIDERS*/
-const CCSLIDER1 = 0;
-const CCSLIDER2 = 0;
-const CCSLIDER3 = 0;
-const CCSLIDER4 = 0;
-const CCSLIDER5 = 0;
-const CCSLIDER6 = 0;
-const CCSLIDER7 = 0;
-const CCSLIDER8 = 0;
-const CCSLIDER9 = 0;
-let myController;
+const CCSLIDER1 = 48;
+const CCSLIDER2 = 49;
+const CCSLIDER3 = 50;
+const CCSLIDER4 = 51;
+const CCSLIDER5 = 52;
+const CCSLIDER6 = 53;
+const CCSLIDER7 = 54;
+const CCSLIDER8 = 55;
+const CCSLIDER9 = 56;
+//blank data
+const SLIDERDATA = [0,0,0,0,0,0,0,0];
+let colours;
+let r = 70;
 //////////////////////////
 // built in P5 function gets called at the beginning
 function setup() {
     createCanvas(innerWidth, innerHeight);
-    background(0);
+    background(30);
+
+    colours = [random(255),random(255),random(255),random(255),random(255),random(255),random(255),random(255),random(255)];
     WebMidi
         .enable()
         .then(onEnabled)
@@ -57,25 +62,57 @@ function allCC(e) {
     let ratio = e.data[2] / 127
     switch (e.controller.number) {
         case CCSLIDER1: 
+        SLIDERDATA[0] = ratio;
             break;
         case CCSLIDER2: 
+        SLIDERDATA[1] = ratio;
             break;
         case CCSLIDER3: 
+        SLIDERDATA[2] = ratio;
             break;
         case CCSLIDER4: 
+        SLIDERDATA[3] = ratio;
             break;
         case CCSLIDER5: 
+        SLIDERDATA[4] = ratio;
             break;
         case CCSLIDER6: 
+        SLIDERDATA[5] = ratio;
             break;
         case CCSLIDER7: 
+        SLIDERDATA[6] = ratio;
             break;
         case CCSLIDER8: 
+        SLIDERDATA[7] = ratio;
             break;
         case CCSLIDER9:
+            SLIDERDATA[8] = ratio;
             break;
-    }
-}
-function draw() {
+    }}
 
-}
+    function draw() {
+        stroke(255,30);
+        translate(width /  2, height /  2);
+        // fill(30);
+        noFill()
+    
+        strokeWeight(1);
+        // map(SLIDERDATA[3],  0,  1,  1,  10)
+    
+        rotate( map(SLIDERDATA[0] * 100,  0,  1,  0,  0.1));
+       let inc = map(SLIDERDATA[3],  0,  1,  TAU / 8,  TAU / 2)
+    
+        beginShape();
+        let baseInc = 100
+        for (let a =  0; a < TAU; a += inc) {
+            let xOff = random(-baseInc*SLIDERDATA[4],baseInc*SLIDERDATA[4]);
+            let yOff = random(-baseInc*SLIDERDATA[5],baseInc*SLIDERDATA[5]);
+            let x = r * cos(a) + xOff;
+            let y = r * sin(a) + yOff;
+    
+            // Apply transformations based on other sliders
+            // For example, the fourth slider might control the scale of the shape
+            vertex(x * map(SLIDERDATA[1]* 10,  0,  1,  0.5,  1.5), y * map(SLIDERDATA[1],  0,  1,  0.5,  1.5));
+        }
+        endShape(CLOSE);
+    }
